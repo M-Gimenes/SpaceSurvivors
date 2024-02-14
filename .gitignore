@@ -1,0 +1,10 @@
+.vscode/
+assets/
+venv/
+*.txt
+routes.py
+__pycache__/
+build/
+dist/
+*.spec
+testes.py
