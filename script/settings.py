@@ -32,7 +32,7 @@ class UI:
         UI.clock = pg.time.Clock()
         UI.FPS = 60
 
-        UI.version = '0.5.2'  # antiga
+        UI.version = '0.5.3'  # antiga
 
         UI.fonts = {
             'sm': UI.sfont,

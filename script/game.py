@@ -12,6 +12,7 @@ from menu import Menu
 from login import Login
 from update import Update
 from offline import Offline
+from path import path
 
 
 class Game:
