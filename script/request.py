@@ -14,7 +14,9 @@ class Request():
         self.url_key = routes.url_key
         self.url_data = routes.url_data
         self.url_update = routes.url_update
-        self.key = {"key-API": Cryptograph().decrypt(self.get_encrypted_key())}
+        encrypted_key = self.get_encrypted_key()
+        if encrypted_key:
+            self.key = {"key-API": Cryptograph().decrypt(encrypted_key)}
 
     def has_internet(function):
         @functools.wraps(function)
