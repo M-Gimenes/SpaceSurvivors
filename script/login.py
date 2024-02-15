@@ -18,33 +18,40 @@ class Login():
         self.fade = Transition()
         self.transition = False
 
-        self.textManager = pgTI.TextInputManager(validator=lambda input: re.match("^[a-zA-Z0-9]{0,12}$", input))
+        self.textManager = pgTI.TextInputManager(
+            validator=lambda input: re.match("^[a-zA-Z0-9]{0,12}$", input))
         self.textinput = pgTI.TextInputVisualizer(manager=self.textManager,
-                                                  font_object=UI.fonts['m'], 
-                                                  antialias=False, 
-                                                  font_color=UI.colors['light-blue'], 
-                                                  cursor_color=UI.colors['white'], 
+                                                  font_object=UI.fonts['m'],
+                                                  antialias=False,
+                                                  font_color=UI.colors['light-blue'],
+                                                  cursor_color=UI.colors['white'],
                                                   cursor_blink_interval=500)
-        
+
         buttons_input = [
-            Button(UI.display_text('instruction1'), UI.fonts['l'], UI.half_width, UI.half_height-125, 0, 'text'),
-            Button(UI.display_text('instruction2'), UI.fonts['sm'], UI.half_width, UI.half_height-90, 0, 'text'),
-            Button(UI.display_text('instruction3'), UI.fonts['sm'], UI.half_width, UI.half_height-50, 0, 'text'),
-            Button(UI.display_text('confirm'), UI.fonts['l'], UI.half_width,UI.half_height+125, 1,'menu')
+            Button(UI.display_text('instruction1'),
+                   UI.fonts['l'], UI.half_width, UI.half_height-125, 0, 'text'),
+            Button(UI.display_text('instruction2'),
+                   UI.fonts['sm'], UI.half_width, UI.half_height-90, 0, 'text'),
+            Button(UI.display_text('instruction3'),
+                   UI.fonts['sm'], UI.half_width, UI.half_height-50, 0, 'text'),
+            Button(UI.display_text('confirm'),
+                   UI.fonts['l'], UI.half_width, UI.half_height+125, 1, 'menu')
         ]
 
         self.buttons = {'buttons_input': buttons_input}
 
         self.current_buttons = 'buttons_input'
 
-        self.warning1 = Button(UI.display_text('warning1'), UI.fonts['sm'], UI.half_width, UI.half_height+60, 0, 'text')
-        self.warning2 = Button(UI.display_text('warning2'), UI.fonts['sm'], UI.half_width, UI.half_height+60, 0, 'text')
+        self.warning1 = Button(UI.display_text(
+            'warning1'), UI.fonts['sm'], UI.half_width, UI.half_height+60, 0, 'text')
+        self.warning2 = Button(UI.display_text(
+            'warning2'), UI.fonts['sm'], UI.half_width, UI.half_height+60, 0, 'text')
         self.warning = []
-
 
     def player_input(self, events):
         self.textinput.update(events)
-        self.textrect = self.textinput.surface.get_rect(center=(UI.half_width+5,UI.half_height))
+        self.textrect = self.textinput.surface.get_rect(
+            center=(UI.half_width+5, UI.half_height))
         UI.screen.fill((0, 0, 0, 255))
         UI.screen.blit(self.textinput.surface, self.textrect)
 
@@ -74,10 +81,11 @@ class Login():
         if self.fade.draw(self.transition):
             self.transition = False
             self.gameStateManager.set_state('menu')
-            
+
     def run(self, dt, events):
         self.player_input(events)
-        for button in self.buttons[self.current_buttons]: button.draw()
-        for button in self.warning: button.draw()
+        for button in self.buttons[self.current_buttons]:
+            button.draw()
+        for button in self.warning:
+            button.draw()
         self.fades()
-        

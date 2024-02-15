@@ -6,31 +6,30 @@ from path import path
 
 class Projectiles(pg.sprite.Sprite):
     projectiles = {'player1': [pg.image.load(path('Fighter/charge/charge1.1.png')).convert_alpha()],
-                    'player2': [pg.image.load(path('Fighter/charge/charge2.1.png')).convert_alpha()],
-                    'enemy1': [pg.image.load(path('Bomber/charge/charge1.1.png')).convert_alpha()],
-                    'enemy2': [pg.image.load(path(f'Bomber/charge/charge2.{i}.png')).convert_alpha() for i in range(1,4+1)]}
-        
+                   'player2': [pg.image.load(path('Fighter/charge/charge2.1.png')).convert_alpha()],
+                   'enemy1': [pg.image.load(path('Bomber/charge/charge1.1.png')).convert_alpha()],
+                   'enemy2': [pg.image.load(path(f'Bomber/charge/charge2.{i}.png')).convert_alpha() for i in range(1, 4+1)]}
+
     def __init__(self, angle, x, y, sprite, scale, damage, speed) -> None:
         super().__init__()
 
-        self.enemies_hit = set() 
+        self.enemies_hit = set()
 
         self.base_damage = damage
         self.damage = self.base_damage
-        self.speed = speed 
+        self.speed = speed
         self.angle = angle
         self.spin = 2
-        
+
         self.duration = pg.time.get_ticks()
 
         self.sprite = sprite
-        self.scale = scale 
+        self.scale = scale
         if self.sprite == 'enemy2':
             self.scale = scale * 2
 
-    
         self.index = 0
-       
+
         self.charge = Projectiles.projectiles[self.sprite][0]
         self.image = pg.transform.rotozoom(self.charge, angle, self.scale)
         self.rect = self.image.get_rect(center=(x, y))
@@ -76,8 +75,9 @@ class Projectiles(pg.sprite.Sprite):
         elif self.rect.right < 0:
             self.kill()
 
-    def update(self,dt, rect_player = (0,0)) -> None:
-        if len(self.enemies_hit): self.damage
+    def update(self, dt, rect_player=(0, 0)) -> None:
+        if len(self.enemies_hit):
+            self.damage
         self.dislocation(dt, rect_player)
         self.animation()
         self.att_sprite()

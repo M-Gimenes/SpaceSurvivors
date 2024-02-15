@@ -6,8 +6,8 @@ from sounds import Sounds
 class Slider:
     def __init__(self, pos: tuple, size: tuple, initial_val: float, min: int, max: int, type: str) -> None:
         self.BUTTONSTATES = {
-            True:UI.colors['light-blue'],
-            False:UI.colors['white']
+            True: UI.colors['light-blue'],
+            False: UI.colors['white']
         }
 
         self.pos = pos
@@ -22,15 +22,20 @@ class Slider:
 
         self.min = min
         self.max = max
-        self.initial_val = (self.slider_right_pos-self.slider_left_pos)*initial_val
+        self.initial_val = (self.slider_right_pos -
+                            self.slider_left_pos)*initial_val
 
-        self.container_rect = pg.Rect(self.slider_left_pos, self.slider_top_pos, self.size[0], self.size[1])
-        self.button_rect = pg.Rect(self.slider_left_pos + self.initial_val - 5, self.slider_top_pos, 10, self.size[1])
+        self.container_rect = pg.Rect(
+            self.slider_left_pos, self.slider_top_pos, self.size[0], self.size[1])
+        self.button_rect = pg.Rect(
+            self.slider_left_pos + self.initial_val - 5, self.slider_top_pos, 10, self.size[1])
 
         # label
-        self.text = UI.fonts['m'].render(str(int(self.get_value())), False, UI.colors['white'], None)
-        self.label_rect = self.text.get_rect(center = (self.pos[0], self.slider_top_pos+18))
-        
+        self.text = UI.fonts['m'].render(
+            str(int(self.get_value())), False, UI.colors['white'], None)
+        self.label_rect = self.text.get_rect(
+            center=(self.pos[0], self.slider_top_pos+18))
+
     def move_slider(self, mouse_pos):
         pos = mouse_pos[0]
         if pos < self.slider_left_pos:
@@ -44,7 +49,8 @@ class Slider:
 
     def render(self):
         pg.draw.rect(UI.screen, UI.colors['blue'], self.container_rect)
-        pg.draw.rect(UI.screen, self.BUTTONSTATES[self.hovered], self.button_rect)
+        pg.draw.rect(
+            UI.screen, self.BUTTONSTATES[self.hovered], self.button_rect)
         pg.draw.rect(UI.screen, (UI.colors['white']), self.container_rect, 1)
 
     def get_value(self):
@@ -58,5 +64,6 @@ class Slider:
 
     def display_value(self):
         if self.hovered:
-            self.text = UI.fonts['m'].render(str(int(self.get_value())), False, UI.colors['white'], None)
+            self.text = UI.fonts['m'].render(
+                str(int(self.get_value())), False, UI.colors['white'], None)
             UI.screen.blit(self.text, self.label_rect)

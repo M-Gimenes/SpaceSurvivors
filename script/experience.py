@@ -4,7 +4,9 @@ from path import path
 
 
 class Experience(pg.sprite.Sprite):
-    frames = [pg.image.load(path(f'Images/xp/pipo-nazoobj03c_192_{i:02d}.png')).convert_alpha() for i in range(1, 30+1)]
+    frames = [pg.image.load(path(
+        f'Images/xp/pipo-nazoobj03c_192_{i:02d}.png')).convert_alpha() for i in range(1, 30+1)]
+
     def __init__(self, pos: tuple) -> None:
         super().__init__()
 
@@ -19,7 +21,8 @@ class Experience(pg.sprite.Sprite):
         self.pos = pos
 
     def animation(self) -> None:
-        self.image = pg.transform.scale_by(Experience.frames[int(self.index)], self.scale)
+        self.image = pg.transform.scale_by(
+            Experience.frames[int(self.index)], self.scale)
         self.index += len(Experience.frames) / \
             (max(UI.clock.get_fps(), 1) * 1)
         if self.index >= len(Experience.frames):
@@ -27,6 +30,7 @@ class Experience(pg.sprite.Sprite):
         self.rect = self.image.get_rect(center=self.pos)
 
     def update(self):
-        if self.growth <= 1: self.growth += 1/(max(UI.clock.get_fps(), 1) * 3)
+        if self.growth <= 1:
+            self.growth += 1/(max(UI.clock.get_fps(), 1) * 3)
         self.scale = UI.scale * self.growth * 0.6
         self.animation()

@@ -202,14 +202,16 @@ class Level():
                                 enemy.set_electrocute(self.electrocute_damage)
                             explosion.enemies_hit.add(enemy)
 
-            #enemies and resurrection
+            # enemies and resurrection
             if self.flash:
                 if self.cards.owned['resurrection_special'] and self.player.sprite.res_count >= 1:
-                    self.flash_surface = pg.surface.Surface(UI.dimension, pg.SRCALPHA)
+                    self.flash_surface = pg.surface.Surface(
+                        UI.dimension, pg.SRCALPHA)
                     self.flash_surface.fill((255, 255, 255, self.flash_alpha))
-                    UI.screen.blit(self.flash_surface, (0,0))
-                    self.flash_alpha += 200/(max(UI.clock.get_fps(), 1)*self.flash_duration)
-                    if self.flash_alpha >= 200: 
+                    UI.screen.blit(self.flash_surface, (0, 0))
+                    self.flash_alpha += 200 / \
+                        (max(UI.clock.get_fps(), 1)*self.flash_duration)
+                    if self.flash_alpha >= 200:
                         self.flash_alpha = 200
                         self.flash_duration *= -1
                         for enemy in self.enemies:
@@ -247,7 +249,8 @@ class Level():
         for enemy in self.enemies:
             pos = enemy.verification_health()
             if pos:
-                if self.player.sprite.lvl < 20: self.experience.add(Experience(pos))
+                if self.player.sprite.lvl < 20:
+                    self.experience.add(Experience(pos))
                 if self.cards.owned['explosion'] >= 1:
                     self.explosions.add(
                         Explosion(pos, self.cards.owned['explosion']))
@@ -263,7 +266,8 @@ class Level():
 
     def check_buff(self):
         if self.cards.owned['atkSPD_special']:
-            self.player.sprite.buff(self.time, self.atkSPD_buff, self.bulletSPD_buff)
+            self.player.sprite.buff(
+                self.time, self.atkSPD_buff, self.bulletSPD_buff)
 
     def check_shield(self):
         if self.cards.owned['shield']:
@@ -319,7 +323,7 @@ class Level():
                 self.burn_damage *= 2
                 self.electrocute_damage *= 2
             elif card == 'explosion':
-                pass 
+                pass
             elif card == 'explosion_special':
                 self.electrocute_damage = 0.50
                 if self.cards.owned['ignite_special']:
@@ -424,8 +428,8 @@ class Level():
     def run(self, dt, events) -> None:
         if not self.player:
             self.reset()
-        
-        if self.current_buttons in ['buttons_tutorial1','buttons_tutorial2']:
+
+        if self.current_buttons in ['buttons_tutorial1', 'buttons_tutorial2']:
             self.tutorials()
 
         UI.screen.blit(self.background_surf, (0, 0))

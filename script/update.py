@@ -13,20 +13,24 @@ class Update():
         self.request = request
 
         buttons_download = [
-            Button(UI.display_text('version'), UI.fonts['l'], UI.half_width, UI.half_height-100, 0, 'text'),
-            Button(UI.display_text('download'), UI.fonts['l'], UI.half_width,UI.half_height+100, 1,'menu')
+            Button(UI.display_text('version'),
+                   UI.fonts['l'], UI.half_width, UI.half_height-100, 0, 'text'),
+            Button(UI.display_text('download'),
+                   UI.fonts['l'], UI.half_width, UI.half_height+100, 1, 'menu')
         ]
 
         buttons_waiting1 = [
-            Button(UI.display_text('wait1'), UI.fonts['l'], UI.half_width, UI.half_height, 0, 'text'),
+            Button(UI.display_text('wait1'),
+                   UI.fonts['l'], UI.half_width, UI.half_height, 0, 'text'),
         ]
         buttons_waiting2 = [
-            Button(UI.display_text('wait2'), UI.fonts['l'], UI.half_width, UI.half_height, 0, 'text'),
+            Button(UI.display_text('wait2'),
+                   UI.fonts['l'], UI.half_width, UI.half_height, 0, 'text'),
         ]
         buttons_waiting3 = [
-            Button(UI.display_text('wait3'), UI.fonts['l'], UI.half_width, UI.half_height, 0, 'text'),
+            Button(UI.display_text('wait3'),
+                   UI.fonts['l'], UI.half_width, UI.half_height, 0, 'text'),
         ]
-
 
         self.buttons = {'buttons_download': buttons_download,
                         'buttons_waiting1': buttons_waiting1,
@@ -45,7 +49,6 @@ class Update():
                 for button in self.buttons[self.current_buttons]:
                     act = button.collide()
                     if act:
-                        #self.sound.effect('button', self.sounds_volumes['button'])
                         if act == 1:
                             self.download_thread.start()
                             self.waiting = True
@@ -62,11 +65,13 @@ class Update():
     def wait(self):
         self.current_buttons = f'buttons_waiting{int(self.i)}'
         self.i += 1/30
-        if self.i >= 4: self.i = 1
+        if self.i >= 4:
+            self.i = 1
 
     def run(self, dt, events):
         UI.screen.fill((0, 0, 0, 255))
         self.player_input(events)
-        for button in self.buttons[self.current_buttons]: button.draw()
+        for button in self.buttons[self.current_buttons]:
+            button.draw()
         if self.waiting:
             self.wait()

@@ -7,7 +7,6 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization
 
 
-
 class SaveManager():
     def __init__(self, request):
         user_dir = os.path.expanduser("~")
@@ -19,7 +18,8 @@ class SaveManager():
         self.request = request
         self.pem_key = self.request.get_public_key()
         self.public_key = None
-        if self.pem_key: self.public_key = serialization.load_pem_public_key(self.pem_key)
+        if self.pem_key:
+            self.public_key = serialization.load_pem_public_key(self.pem_key)
 
     def load(self):
         try:

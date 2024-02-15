@@ -6,7 +6,6 @@ from cryptograph import Cryptograph
 import routes
 
 
-
 class Request():
     def __init__(self, gameStateManager) -> None:
         self.gameStateManager = gameStateManager
@@ -40,9 +39,10 @@ class Request():
     @has_internet
     def set_data(self, player_info):
         headers = {"Content-Type": "application/json",
-                   "action":"set_data"}
+                   "action": "set_data"}
         headers.update(self.key)
-        response = requests.post(url=self.url_data, headers=headers, data=json.dumps(player_info))
+        response = requests.post(
+            url=self.url_data, headers=headers, data=json.dumps(player_info))
         if response.status_code == 200:
             print(response.json())
             return response.json()['result']
@@ -51,7 +51,7 @@ class Request():
 
     @has_internet
     def get_data(self):
-        headers = {"action":"get_data"}
+        headers = {"action": "get_data"}
         headers.update(self.key)
         response = requests.get(url=self.url_data, headers=headers)
         if response.status_code == 200:
@@ -61,7 +61,7 @@ class Request():
 
     @has_internet
     def get_version(self):
-        headers = {"action":"get_version"}
+        headers = {"action": "get_version"}
         headers.update(self.key)
         response = requests.get(url=self.url_data, headers=headers)
         if response.status_code == 200:
@@ -72,7 +72,7 @@ class Request():
 
     @has_internet
     def get_public_key(self):
-        headers = {"action":"get_public_key"}
+        headers = {"action": "get_public_key"}
         headers.update(self.key)
         response = requests.get(url=self.url_data, headers=headers)
         if response.status_code == 200:
@@ -84,9 +84,10 @@ class Request():
     @has_internet
     def get_signature(self, player_save):
         headers = {"Content-Type": "application/octet-stream",
-                   "action":"get_signature"}
+                   "action": "get_signature"}
         headers.update(self.key)
-        response = requests.post(url=self.url_data, headers=headers, data=player_save)
+        response = requests.post(
+            url=self.url_data, headers=headers, data=player_save)
         if response.status_code == 200:
             return response.content
         else:

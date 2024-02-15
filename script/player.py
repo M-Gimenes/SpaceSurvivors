@@ -6,20 +6,21 @@ from shield import Shield
 from projectiles import Projectiles
 from path import path
 
+
 class Player(pg.sprite.Sprite):
     player_animations = {'resurrect': [pg.image.load(path(f'Fighter/destroy/destroy{i}.png')).convert_alpha() for i in range(15, 1-1, -1)],
-                        'destroy': [pg.image.load(path(f'Fighter/destroy/destroy{i}.png')).convert_alpha() for i in range(1, 15+1)],
-                        'damage': [pg.image.load(path(f'Fighter/damage/damage{i}.png')).convert_alpha() for i in range(1, 9+1)],
-                        'evasion': [pg.image.load(path(f'Fighter/evasion/evasion{i}.png')).convert_alpha() for i in range(1, 8+1)],
-                        'boost_attack1': [pg.image.load(path(f'Fighter/boost_attack1/boost_attack1.{i}.png')).convert_alpha() for i in range(1, 4+1)],
-                        'boost_attack2': [pg.image.load(path(f'Fighter/boost_attack2/boost_attack2.{i}.png')).convert_alpha() for i in range(1, 2+1)],
-                        'move_attack1': [pg.image.load(path(f'Fighter/move_attack1/move_attack1.{i}.png')).convert_alpha() for i in range(1, 4+1)],
-                        'move_attack2': [pg.image.load(path(f'Fighter/move_attack2/move_attack2.{i}.png')).convert_alpha() for i in range(1, 2+1)],
-                        'attack1': [pg.image.load(path(f'Fighter/attack1/attack1.{i}.png')).convert_alpha() for i in range(1, 4+1)],
-                        'attack2': [pg.image.load(path(f'Fighter/attack2/attack2.{i}.png')).convert_alpha() for i in range(1, 2+1)],
-                        'boost': [pg.image.load(path(f'Fighter/boost/boost{i}.png')).convert_alpha() for i in range(1, 5+1)],
-                        'move': [pg.image.load(path(f'Fighter/move/move{i}.png')).convert_alpha() for i in range(1, 6+1)],
-                        'idle': pg.image.load(path('Fighter/idle/idle1.png')).convert_alpha()}
+                         'destroy': [pg.image.load(path(f'Fighter/destroy/destroy{i}.png')).convert_alpha() for i in range(1, 15+1)],
+                         'damage': [pg.image.load(path(f'Fighter/damage/damage{i}.png')).convert_alpha() for i in range(1, 9+1)],
+                         'evasion': [pg.image.load(path(f'Fighter/evasion/evasion{i}.png')).convert_alpha() for i in range(1, 8+1)],
+                         'boost_attack1': [pg.image.load(path(f'Fighter/boost_attack1/boost_attack1.{i}.png')).convert_alpha() for i in range(1, 4+1)],
+                         'boost_attack2': [pg.image.load(path(f'Fighter/boost_attack2/boost_attack2.{i}.png')).convert_alpha() for i in range(1, 2+1)],
+                         'move_attack1': [pg.image.load(path(f'Fighter/move_attack1/move_attack1.{i}.png')).convert_alpha() for i in range(1, 4+1)],
+                         'move_attack2': [pg.image.load(path(f'Fighter/move_attack2/move_attack2.{i}.png')).convert_alpha() for i in range(1, 2+1)],
+                         'attack1': [pg.image.load(path(f'Fighter/attack1/attack1.{i}.png')).convert_alpha() for i in range(1, 4+1)],
+                         'attack2': [pg.image.load(path(f'Fighter/attack2/attack2.{i}.png')).convert_alpha() for i in range(1, 2+1)],
+                         'boost': [pg.image.load(path(f'Fighter/boost/boost{i}.png')).convert_alpha() for i in range(1, 5+1)],
+                         'move': [pg.image.load(path(f'Fighter/move/move{i}.png')).convert_alpha() for i in range(1, 6+1)],
+                         'idle': pg.image.load(path('Fighter/idle/idle1.png')).convert_alpha()}
 
     def __init__(self, weapon: int) -> None:
         super().__init__()
@@ -55,14 +56,14 @@ class Player(pg.sprite.Sprite):
         self.acceleration = 0.6
         self.boost = self.acceleration * 1.5
         self.stopwatch_boost = 1
-        
+
         self.friction = 0.1
 
         self.buff_cooldown = 5000
         self.buff_duration = 5000
         self.stopwatch_buff = 0
         self.buffed = False
-        
+
         self.dodge_freeze = 4
         self.start_clock = False
         self.dodge_free = False
@@ -92,8 +93,8 @@ class Player(pg.sprite.Sprite):
 
         self.scale = UI.scale * 1.5
 
-        self.blink_color = {'white': (255, 255, 255), 
-                            'green': (203, 242, 87), 
+        self.blink_color = {'white': (255, 255, 255),
+                            'green': (203, 242, 87),
                             'blue': (37, 142, 193)}
         self.current_color = 'white'
 
@@ -117,12 +118,12 @@ class Player(pg.sprite.Sprite):
         self.image = Player.player_animations['idle']
         self.rect = self.image.get_rect(center=UI.center)
         self.mask = pg.mask.from_surface(self.image)
-        
+
         self.update_animation_time()
 
         self.projectiles = pg.sprite.Group()
         self.clock_animation = Clock(self.animations_time['resurrect_speed'])
-    
+
     def update_animation_time(self):
         self.animations_time = {'resurrect_speed': 1.75,
                                 'destroy_speed': 1.5,
@@ -154,17 +155,22 @@ class Player(pg.sprite.Sprite):
     def apply_boost(self, dt):
         if self.status['is_boosted']:
             self.max_velocity += self.boost
-            if self.max_velocity >= 8: self.max_velocity = 8
+            if self.max_velocity >= 8:
+                self.max_velocity = 8
             self.stamina -= self.stamina_use
-            if self.stamina <= 0: self.stamina = 0
+            if self.stamina <= 0:
+                self.stamina = 0
             self.stopwatch_boost = 1
         else:
-            self.stopwatch_boost -= 1/(max(UI.clock.get_fps(), 1) * self.stamina_cooldown)
+            self.stopwatch_boost -= 1 / \
+                (max(UI.clock.get_fps(), 1) * self.stamina_cooldown)
             if self.stopwatch_boost <= 0:
                 self.stamina += self.stamina_regen
             self.max_velocity -= self.friction * 1.5 * dt
-            if self.max_velocity <= 5: self.max_velocity = 5
-            if self.stamina >= self.max_stamina: self.stamina = self.max_stamina
+            if self.max_velocity <= 5:
+                self.max_velocity = 5
+            if self.stamina >= self.max_stamina:
+                self.stamina = self.max_stamina
 
     def movement_forwards(self, dt) -> None:
         if self.velocity > self.max_velocity:
@@ -180,11 +186,13 @@ class Player(pg.sprite.Sprite):
     def check_evasion(self):
         if self.status['is_evasioned']:
             self.energy -= 1/(max(UI.clock.get_fps(), 1) * self.dodge_duration)
-            if self.energy <= 0 : self.energy = 0
+            if self.energy <= 0:
+                self.energy = 0
         else:
             self.energy += 1/(max(UI.clock.get_fps(), 1) * self.dodge_cooldown)
-            if self.energy >= 1 : self.energy = 1
-    
+            if self.energy >= 1:
+                self.energy = 1
+
     def count_evasion(self):
         if not self.status['is_evasioned']:
             self.dodge_free = True
@@ -214,7 +222,6 @@ class Player(pg.sprite.Sprite):
                 self.stopwatch_buff = time
                 self.buffed = False
 
-
     def spawn_projectiles(self) -> None:
         self.projectiles.add(Projectiles(self.angle, self.rect.centerx, self.rect.centery,
                              f'player{self.weapon}', self.scale, self.damage, self.bullet_speed))
@@ -229,11 +236,11 @@ class Player(pg.sprite.Sprite):
         elif self.rect.right < 0:
             self.rect.left = UI.dimension[0]
 
-
     def regenerate(self):
         if self.regeneration:
             if self.health < self.max_health:
-                self.health += (1/(max(UI.clock.get_fps(), 1)) * self.regen * self.health)
+                self.health += (1/(max(UI.clock.get_fps(), 1))
+                                * self.regen * self.health)
 
     def hit(self, damage):
         if damage == 0:
@@ -279,84 +286,88 @@ class Player(pg.sprite.Sprite):
 
     def resurrect(self):
         if self.resurrection:
-            self.stopwatch_res += 1/(max(UI.clock.get_fps(), 1) * self.res_wait)
+            self.stopwatch_res += 1 / \
+                (max(UI.clock.get_fps(), 1) * self.res_wait)
             if self.stopwatch_res >= 1:
                 self.stopwatch_res = 0
                 self.status['is_resurrected'] = True
                 self.resurrection = False
 
-
     def destroy(self) -> None:
         pass
 
     def get_info(self):
-        return {'max_health':self.max_health,
-                'health':self.health,
-                'max_stamina':self.max_stamina,
-                'stamina':self.stamina,
+        return {'max_health': self.max_health,
+                'health': self.health,
+                'max_stamina': self.max_stamina,
+                'stamina': self.stamina,
                 'dodge': self.energy,
                 'max_xp': self.max_xp,
-                'xp':self.xp}
+                'xp': self.xp}
 
     def animation_state(self) -> None:
         if not self.status['is_moved'] and not self.status['is_boosted']:
             self.index['id_move'] = 0
             self.index['id_boost'] = 0
-        
+
         if self.situation == 'alive':
             self.current_image = self.player_animations['idle']
             if self.status['is_damaged']:
                 self.start_animation('damage', 'id_damage',
-                                    'damage_speed', 'is_damaged')
+                                     'damage_speed', 'is_damaged')
 
             elif self.status['is_evasioned']:
                 self.start_animation('evasion', 'id_evasion',
-                                    'evasion_speed', 'is_evasioned')
+                                     'evasion_speed', 'is_evasioned')
 
             elif self.status['is_attacked'] and self.status['is_boosted']:
                 if self.start_animation(f'boost_attack{self.weapon}', f'id_attack{self.weapon}',
-                                    'attack_speed', 'is_attacked'):
+                                        'attack_speed', 'is_attacked'):
                     self.spawn_projectiles()
                 self.status['is_boosted'] = False
 
             elif self.status['is_attacked'] and self.status['is_moved']:
                 if self.start_animation(f'move_attack{self.weapon}', f'id_attack{self.weapon}',
-                                    'attack_speed', 'is_attacked'):
-                    self.spawn_projectiles()       
+                                        'attack_speed', 'is_attacked'):
+                    self.spawn_projectiles()
                 self.status['is_moved'] = False
 
             elif self.status['is_attacked']:
                 if self.start_animation(f'attack{self.weapon}', f'id_attack{self.weapon}',
-                                    'attack_speed', 'is_attacked'):
+                                        'attack_speed', 'is_attacked'):
                     self.spawn_projectiles()
 
             elif self.status['is_boosted']:
                 self.start_animation('boost', 'id_boost',
-                                    'boost_speed', 'is_boosted')
+                                     'boost_speed', 'is_boosted')
                 self.status['is_boosted'] = False
 
             elif self.status['is_moved']:
-                self.start_animation('move', 'id_move', 'move_speed', 'is_moved')
+                self.start_animation(
+                    'move', 'id_move', 'move_speed', 'is_moved')
                 self.status['is_moved'] = False
         else:
             if self.status['is_resurrected']:
                 if self.start_animation('resurrect', 'id_resurrect',
-                                    'resurrect_speed', 'is_resurrected'):
+                                        'resurrect_speed', 'is_resurrected'):
                     self.situation = 'alive'
                     self.res_count += 1
                 self.clock_animation.animation('back')
-                self.health += self.max_health*self.res_heal/(max(UI.clock.get_fps(), 1) * self.animations_time['resurrect_speed'])
-        
+                self.health += self.max_health*self.res_heal / \
+                    (max(UI.clock.get_fps(), 1) *
+                     self.animations_time['resurrect_speed'])
+
             elif self.status['is_destroyed']:
                 if self.start_animation('destroy', 'id_destroy',
-                                    'destroy_speed', 'is_destroyed'):
+                                        'destroy_speed', 'is_destroyed'):
                     if self.res_heal and self.res_count <= 0:
                         self.resurrection = True
                     else:
                         self.situation = 'dead'
 
     def start_animation(self, action, step, speed, condition) -> bool:
-        self.current_image = Player.player_animations[action][int(self.index[step])]
+        self.current_image = Player.player_animations[action][int(
+            self.index[step])]
         self.index[step] += len(Player.player_animations[action]) / \
             (max(UI.clock.get_fps(), 1) * self.animations_time[speed])
         if self.index[step] >= len(Player.player_animations[action]):
@@ -366,7 +377,8 @@ class Player(pg.sprite.Sprite):
         return False
 
     def att_sprite(self) -> None:
-        self.image = pg.transform.rotozoom( self.current_image, self.angle, self.scale)
+        self.image = pg.transform.rotozoom(
+            self.current_image, self.angle, self.scale)
         self.rect = self.image.get_rect(center=self.rect.center)
         self.mask = pg.mask.from_surface(self.image)
 
@@ -383,11 +395,11 @@ class Player(pg.sprite.Sprite):
         if self.blinked:
             self.white = self.image.copy()
             if len(self.mask.outline()) > 2:
-                pg.draw.polygon(self.white, (self.blink_color[self.current_color][0], 
-                                             self.blink_color[self.current_color][1], 
-                                             self.blink_color[self.current_color][2], 
-                                             self.alpha), 
-                                             self.mask.outline(), 0)
+                pg.draw.polygon(self.white, (self.blink_color[self.current_color][0],
+                                             self.blink_color[self.current_color][1],
+                                             self.blink_color[self.current_color][2],
+                                             self.alpha),
+                                self.mask.outline(), 0)
             self.image.blit(self.white, (0, 0))
             self.alpha -= 255/(max(UI.clock.get_fps(), 1) *
                                self.animations_time['blink_speed'])

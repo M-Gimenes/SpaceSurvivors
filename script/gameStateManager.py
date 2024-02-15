@@ -8,6 +8,6 @@ class GameStateManager:
 
     def set_state(self, state) -> None:
         self.currentState = state
-    
+
     def pass_info(self, **info):
         self.infos = info

@@ -61,8 +61,8 @@ class Enemy(pg.sprite.Sprite):
 
         self.scale = UI.scale * 1.3
 
-        self.blink_color = {'white': (255, 255, 255), 
-                            'red': (255, 26, 26), 
+        self.blink_color = {'white': (255, 255, 255),
+                            'red': (255, 26, 26),
                             'blue': (56, 169, 255)}
         self.current_color = 'white'
 
@@ -288,11 +288,11 @@ class Enemy(pg.sprite.Sprite):
         if self.blinked:
             self.white = self.image.copy()
             if len(self.mask.outline()) > 2:
-                pg.draw.polygon(self.white, (self.blink_color[self.current_color][0], 
-                                             self.blink_color[self.current_color][1], 
-                                             self.blink_color[self.current_color][2], 
-                                             self.alpha), 
-                                             self.mask.outline(), 0)
+                pg.draw.polygon(self.white, (self.blink_color[self.current_color][0],
+                                             self.blink_color[self.current_color][1],
+                                             self.blink_color[self.current_color][2],
+                                             self.alpha),
+                                self.mask.outline(), 0)
             self.image.blit(self.white, (0, 0))
             self.alpha -= 255/(max(UI.clock.get_fps(), 1) *
                                self.animations_time['blink_speed'])

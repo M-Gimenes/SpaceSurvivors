@@ -20,7 +20,7 @@ class Shield():
             self.index[self.type])]
         self.image = pg.transform.scale_by(image, self.scale)
         dark = pg.surface.Surface(self.image.get_size(), pg.SRCALPHA)
-        dark.fill((255,255,255,100))
+        dark.fill((255, 255, 255, 100))
         self.image.blit(dark, (0, 0), special_flags=pg.BLEND_RGBA_MIN)
         self.index[self.type] += len(Shield.shield_animations[self.type]) / \
             (max(UI.clock.get_fps(), 1) * self.time[self.type])
@@ -28,7 +28,8 @@ class Shield():
         UI.screen.blit(self.image, self.rect)
         if self.index[self.type] >= len(Shield.shield_animations[self.type]):
             self.index[self.type] = 0
-            if self.type == 'spawn': self.type = 'keep'
+            if self.type == 'spawn':
+                self.type = 'keep'
             return self.type == 'break'
 
     def change(self, type):
