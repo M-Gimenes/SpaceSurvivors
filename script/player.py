@@ -1,5 +1,5 @@
 import pygame as pg
-from math import pi, cos, sin
+from math import pi, cos, sin, copysign, dist
 from settings import UI
 from clock import Clock
 from shield import Shield
@@ -28,7 +28,7 @@ class Player(pg.sprite.Sprite):
                                          'attack_speed': 2,
                                          'bullet_speed': 14},
                              'weapon2': {'damage': 1,
-                                         'attack_speed': 5,
+                                         'attack_speed': 4,
                                          'bullet_speed': 20}}
 
         self.weapon = weapon
@@ -45,13 +45,13 @@ class Player(pg.sprite.Sprite):
         self.stamina = self.max_stamina
         self.stamina_use = 2
         self.stamina_regen = 1
-        self.stamina_cooldown = 2
+        self.stamina_cooldown = 3
         self.dodge_cooldown = 8
         self.dodge_duration = 1
         self.energy = 1
-        self.spin = 3
+        self.spin = 3.5
         self.angle = 0
-        self.max_velocity = 5
+        self.max_velocity = 4.5
         self.velocity = 0
         self.acceleration = 0.6
         self.boost = self.acceleration * 1.5
@@ -71,14 +71,14 @@ class Player(pg.sprite.Sprite):
 
         self.shield = Shield()
         self.shielded = False
-        self.shield_cooldown = 20000
+        self.shield_cooldown = 40000
         self.shield_count = 0
         self.shield_max = 1
         self.stopwatch_shield = 0
 
         self.xp = 0
         self.lvl = 0
-        self.max_xp = int(self.lvl/2+3)
+        self.max_xp = int(self.lvl/2.2+3)
 
         self.res_heal = 0
         self.res_count = 0
@@ -137,20 +137,33 @@ class Player(pg.sprite.Sprite):
     def player_inputs(self, dt) -> None:
         if not self.status['is_damaged']:
             keys = pg.key.get_pressed()
-            if keys[pg.K_a] or keys[pg.K_LEFT]:
-                self.angle += self.spin * dt
-            if keys[pg.K_d] or keys[pg.K_RIGHT]:
-                self.angle -= self.spin * dt
-            if keys[pg.K_w] or keys[pg.K_UP]:
-                self.velocity += self.acceleration
-                self.status['is_moved'] = True
-            if keys[pg.K_LSHIFT] and self.stamina > 0:
-                self.velocity += self.boost
-                self.status['is_boosted'] = True
-            if keys[pg.K_LCTRL] and not self.status['is_evasioned'] and self.energy >= 1:
+            mouse_pos = pg.mouse.get_pos()
+            mouse_press = pg.mouse.get_pressed()[0]
+            self.rotate(dt, mouse_pos)
+            if dist(mouse_pos, self.rect.center) >= 50:
+                if keys[pg.K_w]:
+                    self.velocity += self.acceleration
+                    self.status['is_moved'] = True
+                if keys[pg.K_e] and self.stamina > 0:
+                    self.velocity += self.boost
+                    self.status['is_boosted'] = True
+            if keys[pg.K_q] and not self.status['is_evasioned'] and self.energy >= 1:
                 self.status['is_evasioned'] = True
-            if (keys[pg.K_SPACE] or keys[pg.K_f]) and not self.status['is_attacked']:
+            if mouse_press and not self.status['is_attacked']:
                 self.status['is_attacked'] = True
+    
+    def rotate(self, dt, mouse_pos):
+        diff_x = mouse_pos[0] - self.rect.centerx
+        diff_y = mouse_pos[1] - self.rect.centery
+        diff_angle = pg.math.Vector2(diff_x, diff_y).angle_to((1, 0))
+        rotate = (diff_angle - self.angle + 180) % 360 - 180
+        if rotate > 1 or rotate < -1:
+            sign = copysign(1, rotate)
+            new_angle = self.angle + self.spin * dt * sign
+            if ((diff_angle - new_angle + 180) % 360 - 180)*sign <= -1*sign:
+                self.angle = self.angle + 0.5 * dt * sign
+            else:
+                self.angle = self.angle + self.spin * dt * sign
 
     def apply_boost(self, dt):
         if self.status['is_boosted']:
@@ -167,8 +180,8 @@ class Player(pg.sprite.Sprite):
             if self.stopwatch_boost <= 0:
                 self.stamina += self.stamina_regen
             self.max_velocity -= self.friction * 1.5 * dt
-            if self.max_velocity <= 5:
-                self.max_velocity = 5
+            if self.max_velocity <= 4.5:
+                self.max_velocity = 4.5
             if self.stamina >= self.max_stamina:
                 self.stamina = self.max_stamina
 

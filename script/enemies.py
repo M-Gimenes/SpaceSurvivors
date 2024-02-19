@@ -1,5 +1,5 @@
 import pygame as pg
-from math import dist, cos, sin, degrees, atan2, pi
+from math import dist, cos, sin, degrees, atan2, pi, copysign
 from random import choice, gauss
 from settings import UI
 from projectiles import Projectiles
@@ -17,7 +17,7 @@ class Enemy(pg.sprite.Sprite):
     def __init__(self, time) -> None:
         super().__init__()
 
-        self.time = time
+        self.time = time*0.2
 
         self.weapons_info = {'weapon1': {'damage': self.time*0.15+1.5,
                                          'attack_speed': self.time*0.2+2,
@@ -29,12 +29,12 @@ class Enemy(pg.sprite.Sprite):
         self.max_health = self.time+10
         self.health = self.max_health
 
-        self.spin = 2.5
+        self.spin = 3
         self.angle = 0
         self.distance = 0
         self.max_velocity = self.time*0.6+6
         self.velocity = 0
-        self.acceleration = 0.25
+        self.acceleration = 0.35
         self.friction = 0.15
 
         self.bullets = 0
@@ -69,7 +69,7 @@ class Enemy(pg.sprite.Sprite):
         self.animations_time = {'move_speed': 3,
                                 'boost_speed': 3,
                                 'attack_speed': 1,
-                                'damage_speed': 1,
+                                'damage_speed': 0.75,
                                 'destroy_speed': 1.2,
                                 'blink_speed': 0.4,
                                 'vanish_speed': 1.5}
@@ -117,12 +117,21 @@ class Enemy(pg.sprite.Sprite):
         self.remain = dist(self.rect.center, self.target)
         if (self.distance / 2 < self.remain and not self.status['is_damaged'] and self.situation == 'alive') or player_dead == 'dead':
             self.velocity += self.acceleration * dt
-            rotate = (self.target_angle - self.angle + 180) % 360 - 180
-            if rotate >= 3:
-                self.angle += self.spin * dt
-            elif rotate <= -3:
-                self.angle -= self.spin * dt
+            self.rotate(dt, self.target_angle)
             self.status['is_moved'] = True
+
+    def rotate(self, dt, target):
+        rotate = (target - self.angle + 180) % 360 - 180
+        if rotate > 3 or rotate < -3:
+            sign = copysign(1, rotate)
+            new_angle = self.angle + self.spin * dt * sign
+            if ((target - new_angle + 180) % 360 - 180)*sign <= -3*sign:
+                self.angle = self.angle + 1.5 * dt * sign
+            else:
+                self.angle = self.angle + self.spin * dt * sign
+            return True
+        return False
+
 
     def movement(self, dt) -> None:
         if self.velocity > self.max_velocity:
@@ -145,14 +154,9 @@ class Enemy(pg.sprite.Sprite):
 
     def aim(self, dt, rect_player, player_dead) -> None:
         if self.distance / 2 >= self.remain and self.aiming and player_dead == 'alive':
-            self.fire_angle = -degrees(atan2(
+            fire_angle = -degrees(atan2(
                 rect_player[1] - self.rect.centery, rect_player[0] - self.rect.centerx))
-            rotate = (self.fire_angle - self.angle + 180) % 360 - 180
-            if rotate >= 3:
-                self.angle += self.spin * dt
-            elif rotate <= -3:
-                self.angle -= self.spin * dt
-            else:
+            if not self.rotate(dt, fire_angle):
                 self.sweep_weapon()
                 self.firing = True
                 self.aiming = False
@@ -238,7 +242,7 @@ class Enemy(pg.sprite.Sprite):
         self.alpha -= 255/(max(UI.clock.get_fps(), 1) *
                            self.animations_time['vanish_speed'])
         self.image.set_alpha(self.alpha)
-        if self.alpha <= 0:
+        if self.alpha <= 0 and not len(self.projectiles):
             self.kill()
 
     def animation_state(self) -> None:

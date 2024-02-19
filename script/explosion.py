@@ -12,7 +12,7 @@ class Explosion(pg.sprite.Sprite):
 
         self.enemies_hit = set()
 
-        self.damage = 4 + 3 * lvl
+        self.damage = 4
         self.growth = 1 + 0.25 * lvl
         self.duration = 0.75
         self.pos = pos

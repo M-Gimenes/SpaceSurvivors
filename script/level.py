@@ -53,60 +53,34 @@ class Level():
         self.fade = Transition()
         self.transition = False
 
-        buttons_tutorial1 = [
-            Button('W', UI.fonts['sm'], UI.half_width *
+        self.mouse1_pos = UI.half_width*0.85, UI.half_height - 40
+        self.mouse1 = pg.image.load(path('Images/mouse1.png')).convert_alpha()
+        self.mouse1_rect = self.mouse1.get_rect(center=self.mouse1_pos)
+        self.mouse1_border = pg.rect.Rect((0,0), (self.mouse1.get_size()))
+        self.mouse1_border.center=self.mouse1_pos
+        self.mouse2_pos = UI.half_width*1.15, UI.half_height - 40
+        self.mouse2 = pg.image.load(path('Images/mouse2.png')).convert_alpha()
+        self.mouse2_rect = self.mouse2.get_rect(center=self.mouse2_pos)
+        self.mouse2_border = pg.rect.Rect((0,0), (self.mouse2.get_size()))
+        self.mouse2_border.center=self.mouse2_pos
+
+        buttons_tutorial = [
+            Button('Q', UI.fonts['m'], UI.half_width *
                    0.7, UI.half_height - 175, 0, 'button'),
             Button(UI.display_text(
                 'control1'), UI.fonts['sm'], UI.half_width*0.7, UI.half_height - 135, 0, 'text'),
-            Button('A', UI.fonts['sm'], UI.half_width *
+            Button('W', UI.fonts['m'], UI.half_width *
                    1, UI.half_height - 175, 0, 'button'),
             Button(UI.display_text(
-                'control2.1'), UI.fonts['sm'], UI.half_width*1, UI.half_height - 135, 0, 'text'),
-            Button('D', UI.fonts['sm'], UI.half_width *
+                'control2'), UI.fonts['sm'], UI.half_width*1, UI.half_height - 135, 0, 'text'),
+            Button('E', UI.fonts['m'], UI.half_width *
                    1.3, UI.half_height - 175, 0, 'button'),
             Button(UI.display_text(
-                'control2.2'), UI.fonts['sm'], UI.half_width*1.3, UI.half_height - 135, 0, 'text'),
-            Button('LShift', UI.fonts['sm'], UI.half_width *
-                   0.7, UI.half_height - 60, 0, 'button'),
+                'control3'), UI.fonts['sm'], UI.half_width*1.3, UI.half_height - 135, 0, 'text'),
             Button(UI.display_text(
-                'control3'), UI.fonts['sm'], UI.half_width*0.7, UI.half_height - 20, 0, 'text'),
-            Button('LCtrl', UI.fonts['sm'], UI.half_width *
-                   1.3, UI.half_height - 60, 0, 'button'),
+                'mouse1'), UI.fonts['sm'], UI.half_width*0.85, UI.half_height + 5, 0, 'text'),
             Button(UI.display_text(
-                'control4'), UI.fonts['sm'], UI.half_width*1.3, UI.half_height - 20, 0, 'text'),
-            Button(UI.display_text('spacebar'),
-                   UI.fonts['sm'], UI.half_width, UI.half_height - 60, 0, 'button'),
-            Button(UI.display_text('control5'),
-                   UI.fonts['sm'], UI.half_width, UI.half_height - 20, 0, 'text'),
-            Button(UI.display_text('continue'),
-                   UI.fonts['m'], UI.half_width, UI.half_height + 175, 4, 'menu')
-        ]
-
-        buttons_tutorial2 = [
-            Button(UI.display_text('up'), UI.fonts['sm'], UI.half_width *
-                   0.7, UI.half_height - 175, 0, 'button'),
-            Button(UI.display_text(
-                'control1'), UI.fonts['sm'], UI.half_width*0.7, UI.half_height - 135, 0, 'text'),
-            Button(UI.display_text('left'), UI.fonts['sm'], UI.half_width *
-                   1.0, UI.half_height - 175, 0, 'button'),
-            Button(UI.display_text(
-                'control2.1'), UI.fonts['sm'], UI.half_width*1, UI.half_height - 135, 0, 'text'),
-            Button(UI.display_text('right'), UI.fonts['sm'], UI.half_width *
-                   1.3, UI.half_height - 175, 0, 'button'),
-            Button(UI.display_text(
-                'control2.2'), UI.fonts['sm'], UI.half_width*1.3, UI.half_height - 135, 0, 'text'),
-            Button('LShift', UI.fonts['sm'], UI.half_width *
-                   0.7, UI.half_height - 60, 0, 'button'),
-            Button(UI.display_text(
-                'control3'), UI.fonts['sm'], UI.half_width*0.7, UI.half_height - 20, 0, 'text'),
-            Button('LCtrl', UI.fonts['sm'], UI.half_width *
-                   1.3, UI.half_height - 60, 0, 'button'),
-            Button(UI.display_text(
-                'control4'), UI.fonts['sm'], UI.half_width*1.3, UI.half_height - 20, 0, 'text'),
-            Button(UI.display_text('spacebar'),
-                   UI.fonts['sm'], UI.half_width, UI.half_height - 60, 0, 'button'),
-            Button(UI.display_text('control5'),
-                   UI.fonts['sm'], UI.half_width, UI.half_height - 20, 0, 'text'),
+                'mouse2'), UI.fonts['sm'], UI.half_width*1.15, UI.half_height + 5, 0, 'text'),
             Button(UI.display_text('continue'),
                    UI.fonts['m'], UI.half_width, UI.half_height + 175, 4, 'menu')
         ]
@@ -141,15 +115,14 @@ class Level():
 
         button_empty = []
 
-        self.buttons = {'buttons_tutorial1': buttons_tutorial1,
-                        'buttons_tutorial2': buttons_tutorial2,
+        self.buttons = {'buttons_tutorial': buttons_tutorial,
                         'buttons_game': buttons_game,
                         'buttons_level_up': buttons_level_up,
                         'buttons_pause': buttons_pause,
                         'buttons_gameover': buttons_gameover,
                         '': button_empty}
 
-        self.current_buttons = 'buttons_tutorial1'
+        self.current_buttons = 'buttons_tutorial'
         self.pressed = False
 
         self.player = pg.sprite.GroupSingle()
@@ -164,8 +137,8 @@ class Level():
         self.hud = Hud()
 
     def spawn_enemies(self) -> None:
-        self.enemies_cooldown = -0.01 * \
-            (self.time/60000)**2-0.2*(self.time/60000)+8
+        self.enemies_cooldown = -0.02 * \
+            (self.time/60000)**2-0.3*(self.time/60000)+8
         if (self.time - self.stopwatch_enemy)/1000 > max(self.enemies_cooldown, 0.5):
             self.stopwatch_enemy = self.time
             self.enemies.add(Enemy((self.time/60000)))
@@ -278,8 +251,8 @@ class Level():
             if card == 'skip':
                 pass
             elif card == 'hp':
-                self.player.sprite.health += self.player.sprite.max_health*0.15
-                self.player.sprite.max_health *= 1.15
+                self.player.sprite.health += self.player.sprite.max_health*0.2
+                self.player.sprite.max_health *= 1.2
             elif card == 'hp_special':
                 self.player.sprite.regeneration = True
                 self.player.sprite.regen = 0.001
@@ -291,7 +264,7 @@ class Level():
             elif card == 'dodge':
                 self.player.sprite.dodge_cooldown -= 1
             elif card == 'dodge_special':
-                self.freeze_time = 2500
+                self.freeze_time = 4000
             elif card == 'resurrection':
                 self.player.sprite.res_heal += 0.05
             elif card == 'resurrection_special':
@@ -310,7 +283,7 @@ class Level():
             elif card == 'atkDMG':
                 self.player.sprite.damage *= 1.15
             elif card == 'atkDMG_special':
-                self.life_steel = 0.01
+                self.life_steel = 0.02
             elif card == 'atkSPD':
                 self.player.sprite.attack_speed *= 1.1
                 self.player.sprite.bullet_speed *= 1.1
@@ -325,7 +298,7 @@ class Level():
             elif card == 'explosion':
                 pass
             elif card == 'explosion_special':
-                self.electrocute_damage = 0.50
+                self.electrocute_damage = 0.40
                 if self.cards.owned['ignite_special']:
                     self.electrocute_damage *= 2
 
@@ -355,10 +328,6 @@ class Level():
                         elif act == 6:
                             self.upgrades('skip')
 
-    def tutorials(self):
-        if self.stopwatch_time - self.stopwatch_tutorial >= 1500:
-            self.current_buttons = 'buttons_tutorial2' if self.current_buttons == 'buttons_tutorial1' else 'buttons_tutorial1'
-            self.stopwatch_tutorial = self.stopwatch_time
 
     def show_time(self):
         self.image_time_text = UI.fonts['l'].render(
@@ -398,7 +367,8 @@ class Level():
             self.transition = False
             self.player.empty()
             self.enemies.empty()
-            self.current_buttons = 'buttons_tutorial1'
+            self.experience.empty()
+            self.current_buttons = 'buttons_tutorial'
             self.gameStateManager.set_state('menu')
 
     def reset(self):
@@ -411,7 +381,7 @@ class Level():
         self.life_steel = 0
         self.damage_reduction = 0
         self.penetration = 1
-        self.freeze_time = 2000
+        self.freeze_time = 0
         self.cards = Cards()
         self.darkness = 0
         self.saved = False
@@ -429,11 +399,9 @@ class Level():
         if not self.player:
             self.reset()
 
-        if self.current_buttons in ['buttons_tutorial1', 'buttons_tutorial2']:
-            self.tutorials()
-
         UI.screen.blit(self.background_surf, (0, 0))
         UI.screen.blit(self.dark_background, (0, 0))
+
         if self.paused:
             self.stopwatch_time = pg.time.get_ticks() - self.time
             self.dark_death.fill((0, 0, 0, 200))
@@ -473,6 +441,12 @@ class Level():
                 self.sound.reset()
                 self.sound.play(self.transition)
                 self.time = pg.time.get_ticks() - self.stopwatch_time
+
+        if self.current_buttons == 'buttons_tutorial':
+            UI.screen.blit(self.mouse1, self.mouse1_rect)
+            UI.screen.blit(self.mouse2, self.mouse2_rect)
+            pg.draw.rect(UI.screen, (UI.colors['white']), self.mouse1_border, 2, 2)
+            pg.draw.rect(UI.screen, (UI.colors['white']), self.mouse2_border, 2, 2)
 
         if self.up:
             self.upgrades(self.cards.draw(events))
