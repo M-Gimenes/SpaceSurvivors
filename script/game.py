@@ -1,7 +1,6 @@
 import pygame as pg
 import sys
 import os
-from statistics import mean
 
 from settings import UI
 from gameStateManager import GameStateManager
@@ -41,7 +40,7 @@ class Game:
                        'login': self.login,
                        'update': self.update,
                        'offline': self.offline}
-        
+
         self.cursor = pg.image.load(path('Images/8_white.png')).convert_alpha()
 
     def run(self) -> None:
@@ -53,11 +52,8 @@ class Game:
                     sys.exit()
 
             dt = (UI.FPS/max(UI.clock.get_fps(), 1))
-            
-            self.states[self.gameStateManager.get_state()].run(dt, events)
 
-            #cursor_img_rect = self.cursor.get_rect(center = pg.mouse.get_pos())
-            #UI.screen.blit(self.cursor, cursor_img_rect)
+            self.states[self.gameStateManager.get_state()].run(dt, events)
 
             pg.display.update()
             UI.clock.tick(30)  # arrumar aqui

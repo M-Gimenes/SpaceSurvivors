@@ -3,7 +3,6 @@ from statistics import mean
 from path import path
 
 pg.init()
-pg.mouse.set_visible(True)
 pg.display.set_icon(pg.image.load(path('Images/idle1.png')))
 aux = pg.display.Info()
 SCREENWIDTH, SCREENHEIGHT = aux.current_w, aux.current_h

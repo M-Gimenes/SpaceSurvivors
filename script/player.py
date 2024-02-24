@@ -27,8 +27,8 @@ class Player(pg.sprite.Sprite):
         self.weapons_info = {'weapon1': {'damage': 2.5,
                                          'attack_speed': 2,
                                          'bullet_speed': 14},
-                             'weapon2': {'damage': 1,
-                                         'attack_speed': 4,
+                             'weapon2': {'damage': 1.5,
+                                         'attack_speed': 3.5,
                                          'bullet_speed': 20}}
 
         self.weapon = weapon
@@ -59,8 +59,8 @@ class Player(pg.sprite.Sprite):
 
         self.friction = 0.1
 
-        self.buff_cooldown = 5000
-        self.buff_duration = 5000
+        self.buff_cooldown = 4000
+        self.buff_duration = 4000
         self.stopwatch_buff = 0
         self.buffed = False
 

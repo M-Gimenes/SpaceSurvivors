@@ -94,6 +94,7 @@ class Cards():
         self.types_owned = {'attack': [], 'defense': []}
 
         self.update_owned_cards()
+        self.ready = False
 
     def create_cards(self):
         n = min(len(self.cards), 4)
@@ -126,25 +127,29 @@ class Cards():
         return True
 
     def get_card(self, events):
-        for event in events:
-            if event.type == pg.MOUSEBUTTONUP and event.button == 1:
-                for button in self.current_cards:
-                    act = button.collide()
-                    if act:
-                        if act.find('special') >= 0:
-                            self.remove_special_card(act)
-                        else:
-                            self.remove_card(act)
+        if not pg.mouse.get_pressed()[0]:
+            self.ready = True
+        if self.ready:
+            for event in events:
+                if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                    for button in self.current_cards:
+                        act = button.collide()
+                        if act:
+                            if act.find('special') >= 0:
+                                self.remove_special_card(act)
+                            else:
+                                self.remove_card(act)
 
-                        for type, cards in self.types_owned.items():
-                            if len(cards) >= self.max_cards:
-                                for card in self.cards_types[type]:
-                                    if card.find('special') == -1 and card not in cards and card in self.cards:
-                                        self.cards.remove(card)
-                        self.update_owned_cards()
-                        self.current_cards.clear()
-                        return act
-                return False
+                            for type, cards in self.types_owned.items():
+                                if len(cards) >= self.max_cards:
+                                    for card in self.cards_types[type]:
+                                        if card.find('special') == -1 and card not in cards and card in self.cards:
+                                            self.cards.remove(card)
+                            self.update_owned_cards()
+                            self.current_cards.clear()
+                            return act
+                    self.ready = False
+                    return False
 
     def remove_special_card(self, card):
         self.owned[card] += 1

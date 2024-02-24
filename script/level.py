@@ -137,11 +137,12 @@ class Level():
         self.hud = Hud()
 
     def spawn_enemies(self) -> None:
-        self.enemies_cooldown = -0.02 * \
-            (self.time/60000)**2-0.3*(self.time/60000)+8
-        if (self.time - self.stopwatch_enemy)/1000 > max(self.enemies_cooldown, 0.5):
-            self.stopwatch_enemy = self.time
-            self.enemies.add(Enemy((self.time/60000)))
+        if self.time >= 8000:
+            self.enemies_cooldown = -0.02 * \
+                (self.time/60000)**2-0.3*(self.time/60000)+7
+            if (self.time - self.stopwatch_enemy)/1000 > max(self.enemies_cooldown, 1):
+                self.stopwatch_enemy = self.time
+                self.enemies.add(Enemy((self.time/60000)))
 
     def collide(self) -> None:
         if self.player:
@@ -286,10 +287,10 @@ class Level():
                 self.life_steel = 0.02
             elif card == 'atkSPD':
                 self.player.sprite.attack_speed *= 1.1
-                self.player.sprite.bullet_speed *= 1.1
+                self.player.sprite.bullet_speed *= 1.05
             elif card == 'atkSPD_special':
                 self.atkSPD_buff = 2
-                self.bulletSPD_buff = 1.5
+                self.bulletSPD_buff = 1.1
             elif card == 'ignite':
                 self.burn_damage += 0.1
             elif card == 'ignite_special':
@@ -412,7 +413,8 @@ class Level():
             self.show_time()
             self.player.update(dt, events)
             self.player.draw(UI.screen)
-            self.spawn_enemies()
+            if self.time >= 8000:
+                self.spawn_enemies()
             self.experience.update()
             self.experience.draw(UI.screen)
             self.enemies.update(

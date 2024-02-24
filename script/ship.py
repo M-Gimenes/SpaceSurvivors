@@ -47,7 +47,7 @@ class Ship(pg.sprite.Sprite):
             self.text.draw()
 
     def unlock_ship(self, player_info):
-        if player_info['score'] >= 180:
+        if player_info['score'] >= 300:
             self.available['2'] = True
 
     def check_ship(self):

@@ -17,7 +17,7 @@ class Enemy(pg.sprite.Sprite):
     def __init__(self, time) -> None:
         super().__init__()
 
-        self.time = time*0.2
+        self.time = time*0.10
 
         self.weapons_info = {'weapon1': {'damage': self.time*0.15+1.5,
                                          'attack_speed': self.time*0.2+2,
