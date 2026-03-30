@@ -1,3 +1,5 @@
+![banner](https://github.com/M-Gimenes/SpaceSurvivors/blob/master/Poster.png)
+
 # Space Survivors 🚀
 
 A 2D space survival game developed in Python to practice Object-Oriented Programming (OOP) and real-time logic handling.
