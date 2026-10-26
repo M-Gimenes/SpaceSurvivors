@@ -23,7 +23,7 @@ class Game:
         UI.load_language(self.saveManager.load())
         if self.check_version():
             self.gameStateManager.set_state('update')
-        elif not self.saveManager.load() and self.request.get_encrypted_key():
+        elif self.gameStateManager.get_state() != 'offline' and self.saveManager.migrate_legacy() is False:
             self.gameStateManager.set_state('login')
 
         self.menu = Menu(self.gameStateManager, self.saveManager, self.request)

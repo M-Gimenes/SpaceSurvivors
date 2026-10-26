@@ -1,0 +1,4 @@
+pygame-ce>=2.5
+requests>=2.31
+pyinstaller>=6
+# pygame-textinput: instalar com --no-deps (ele pede o pygame original, que nao tem pacote pro Python 3.14)

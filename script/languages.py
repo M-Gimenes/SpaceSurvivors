@@ -15,6 +15,7 @@ en_US = {
     'confirm': 'Confirm',
     'warning1': 'Invalid nickname',
     'warning2': 'Nickname already in use',
+    'warning3': 'Server busy, try again in a moment',
     # menu screen
     'button_play': 'Play',
     'button_rank': 'Rank',
@@ -112,6 +113,7 @@ pt_BR = {
     'confirm': 'Confirmar',
     'warning1': 'Apelido inválido',
     'warning2': 'Apelido já em uso',
+    'warning3': 'Servidor ocupado, tente de novo em instantes',
     # menu screen
     'button_play': 'Jogar',
     'button_rank': 'Ranque',

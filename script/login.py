@@ -46,6 +46,8 @@ class Login():
             'warning1'), UI.fonts['sm'], UI.half_width, UI.half_height+60, 0, 'text')
         self.warning2 = Button(UI.display_text(
             'warning2'), UI.fonts['sm'], UI.half_width, UI.half_height+60, 0, 'text')
+        self.warning3 = Button(UI.display_text(
+            'warning3'), UI.fonts['sm'], UI.half_width, UI.half_height+60, 0, 'text')
         self.warning = []
 
     def player_input(self, events):
@@ -66,16 +68,22 @@ class Login():
                             self.check_availability()
 
     def check_availability(self):
-        action = self.request.set_data(self.player_info)
-        if action == 1:
-            self.saveManager.save(self.player_info)
+        answer = self.request.register(self.player_info['nickname'])
+        if answer is None:  # sem servidor: o request já mudou para a tela offline
+            return
+        result, token = answer
+        self.warning.clear()
+        if result == 1:
+            data = self.saveManager.load()  # mantém o idioma escolhido
+            data.update(nickname=self.player_info['nickname'], score=0, token=token)
+            self.saveManager.save(data)
             self.transition = True
-        elif action == 2:
-            self.warning.clear()
+        elif result == 2:
             self.warning.append(self.warning2)
-        else:
-            self.warning.clear()
+        elif result == 3:
             self.warning.append(self.warning1)
+        else:
+            self.warning.append(self.warning3)
 
     def fades(self):
         if self.fade.draw(self.transition):

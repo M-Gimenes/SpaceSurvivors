@@ -1,11 +1,14 @@
 .claude
 .vscode/
-assets/
 venv/
-*.txt
-routes.py
+.venv/
 __pycache__/
 build/
 dist/
 *.spec
 testes.py
+*.txt
+!requirements.txt
+
+# Endereço do servidor: cada um cria o seu a partir de script/routes.example.py
+routes.py

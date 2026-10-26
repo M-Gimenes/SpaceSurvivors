@@ -155,8 +155,6 @@ class Menu():
                                 self.saveManager.load())
                         elif act == 2:
                             data = self.saveManager.load()
-                            if data:
-                                self.request.set_data(data)
                             self.rank_surface = self.rank.render_table(
                                 self.request.get_data(), data)
                             self.current_buttons = 'buttons_rank'

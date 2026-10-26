@@ -18,7 +18,7 @@
 
 Space Survivors started as a personal challenge to move beyond simple scripts and build something with real-time interactivity, physics, and visual feedback. The result is a complete game loop — from the main menu to a global leaderboard — with every system implemented in Python using the Pygame framework.
 
-The project covers a wide range of software engineering concepts: object-oriented design, state machines, physics simulation, sprite animation, network communication, cryptographic save verification, and more. It is deployed as a standalone executable on **[itch.io](https://mgimenes.itch.io/space-survivors)** and includes a live backend for authentication, leaderboard, and auto-updates.
+The project covers a wide range of software engineering concepts: object-oriented design, state machines, physics simulation, sprite animation, network communication, server-side score validation, and more. It is deployed as a standalone executable on **[itch.io](https://mgimenes.itch.io/space-survivors)** and includes a live backend for authentication, leaderboard, and auto-updates.
 
 ---
 
@@ -102,20 +102,47 @@ Sprite groups and **pixel-perfect mask collision** (`collide_mask`) handle all i
 
 The game communicates with a REST API for several features:
 
-- **Login & Nickname** — registered before the first run; stored server-side
-- **Global Leaderboard** — top scores fetched and displayed in-game
-- **Save Synchronization** — player data (score, settings, nickname) is persisted locally and synced to the server
-- **RSA Save Integrity** — the save file is serialized with `pickle` and its **RSA-PSS/SHA-256 signature** is verified on every load. A tampered save is detected and deleted automatically, preventing cheating
-- **Encrypted API Key** — the API key is never stored in plain text; it is fetched from the server and decrypted at runtime using the `Cryptograph` module
+- **Nickname Ownership** — registering a nickname returns a private token, kept in the local save; the server stores only its hash and requires it for every run
+- **Time-Proofed Scores** — the client opens a run on the server when a level starts and sends the time survived when the player dies; the server rejects any score longer than the real time that passed
+- **Global Leaderboard** — top scores fetched and displayed in-game; the best score lives on the server and never goes down
+- **Save Migration** — saves from version 1.0.0, which were RSA-signed by the server, are exchanged once for a token, keeping the player's nickname
 - **Auto-Updater** — on launch, the client compares its version against the server. If a new version exists, it downloads and hot-swaps the executable
 
-A `@has_internet` decorator wraps every network call, gracefully redirecting the game to an `offline` state if the connection fails.
+An `@online` decorator wraps every network call, gracefully redirecting the game to an `offline` state if the connection fails.
 
 ### Internationalization
 
 The game automatically detects the system locale and loads either English (`en_US`) or Brazilian Portuguese (`pt_BR`). Language can also be changed manually through the options menu.
 
 ---
+
+## Running from Source
+
+The backend address is kept out of the repository. Create it from the template:
+
+```bash
+copy script\routes.example.py script\routes.py
+```
+
+Then install and run from the repository root (asset paths are relative to it):
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+pip install --no-deps pygame-textinput
+python script\initializer.py
+```
+
+The game uses [pygame-ce](https://pyga.me), a drop-in fork of pygame with builds for current Python versions. `pygame-textinput` is installed with `--no-deps` because it declares the original `pygame` package as a dependency.
+
+### Building the executable
+
+`build.bat` creates the virtual environment, installs the dependencies and runs PyInstaller. The result is `dist\Space Survivors.exe`, a single file with the assets bundled inside.
+
+### How scores are protected
+
+The client holds no secrets. The [server](https://github.com/M-Gimenes/SpaceSurvivors-Server) gives each nickname a private token on registration, records when each run starts and only accepts a score (seconds survived) that fits in the real time the run took. The best score lives on the server and never goes down.
 
 ## Project Structure
 
@@ -133,9 +160,9 @@ script/
 ├── menu.py              # Main menu, weapon select, rank, options
 ├── login.py             # Nickname registration screen
 ├── rank.py              # Leaderboard display
-├── saveManager.py       # Local save + RSA signature verification
-├── request.py           # REST API client with @has_internet decorator
-├── cryptograph.py       # API key encryption/decryption
+├── saveManager.py       # Local save (nickname, token, language) + 1.0.0 migration
+├── request.py           # REST API client with @online decorator
+├── routes.example.py    # Template for routes.py (server address, kept out of git)
 ├── update.py            # In-game auto-updater
 ├── offline.py           # Offline fallback screen
 ├── transition.py        # Fade in/out effects
@@ -156,9 +183,9 @@ script/
 | Delta-Time Game Loop           | `dt = FPS / current_fps` applied to all physics and animations            |
 | Sprite Groups & Mask Collision | `pg.sprite.Group`, `groupcollide`, `collide_mask`                     |
 | Animation State Machine        | Per-entity status flags driving frame index progression                     |
-| REST API Integration           | `requests` library with custom headers and streaming download             |
-| Cryptography                   | RSA-PSS signature verification via `cryptography.hazmat`                  |
-| Decorator Pattern              | `@has_internet` wraps all network methods                                 |
+| REST API Integration           | `requests` library with JSON bodies and streaming download                |
+| Server-Authoritative Scores    | Per-player token and run timing checked by the backend                    |
+| Decorator Pattern              | `@online` wraps all network methods                                       |
 | Procedural Difficulty Scaling  | Enemy stats grow as a function of elapsed time                              |
 | Internationalization           | Locale-based string table lookup                                            |
 

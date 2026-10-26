@@ -55,7 +55,8 @@ class Update():
 
     def start_download(self):
         temp_path = os.path.join(os.getcwd(), "temp_game.exe")
-        self.request.download_update(temp_path)
+        if not self.request.download_update(temp_path):
+            return
         name_exe = sys.argv[0]
         new_executable_name = "temp_game_old(delete_this).exe"
         os.rename(name_exe, new_executable_name)

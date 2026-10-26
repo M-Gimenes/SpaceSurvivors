@@ -49,6 +49,7 @@ class Level():
         self.flash_alpha = 0
 
         self.score = 0
+        self.run_open = False
 
         self.fade = Transition()
         self.transition = False
@@ -348,11 +349,13 @@ class Level():
     def save_score(self):
         if not self.saved:
             self.score = self.time // 1000
-            data = self.saveManager.load()
-            if self.score > data['score']:
-                data['score'] = self.score
-                self.saveManager.save(data)
-                self.request.set_data(data)
+            if self.run_open:
+                data = self.saveManager.load()
+                answer = self.request.finish_run(data['nickname'], data['token'], self.score)
+                if answer:
+                    data['score'] = answer['best']  # o recorde que vale é o do servidor
+                    self.saveManager.save(data)
+            self.run_open = False
             self.saved = True
 
     def dark_screen(self) -> None:
@@ -393,6 +396,11 @@ class Level():
         self.stopwatch_tutorial = 0
         self.stopwatch_buff = 0
         self.stopwatch_time = pg.time.get_ticks()
+
+        # O servidor anota o início da partida e só aceita score até o tempo real que passou.
+        data = self.saveManager.load()
+        self.run_open = bool(data.get('token')) and bool(
+            self.request.start_run(data.get('nickname'), data['token']))
 
         self.player.add(Player(self.gameStateManager.infos['weapon']))
 
